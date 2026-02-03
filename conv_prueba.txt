@@ -1,0 +1,249 @@
+Jordy:"
+Conversación con Gemini
+
+Estoy siendo parte de un experimento, al ser sujeto de prueba necesito que analices las instrucciones especificadas en el documento que esta dentro del repositorio en el cual debo subir todos los cambios, entiendelo y analizalo para los siguientes pasos que te mencionare posteriormente:"Especificación de la clase Order
+ 
+Arquitectura del sistema
+La  clase Order contiene los artículos comprados por un cliente de
+un portal de compras.
+
+Figura 1.
+Diagrama de clases
+ 
+La
+arquitectura del sistema de software se muestra en Figura
+1. El portal
+de compras vende una amplia gama de productos. Cuando un cliente quiere hacer
+una compra, se crea una nueva order.
+Dicha instanciación la realiza una clase controladora que no se muestra en el
+diagrama. 
+Cada
+vez que un cliente selecciona un product,
+se crea un nuevo item[1]
+y la clase controladora añade el item
+a la order.  El portal de compras contiene productos de
+diferentes proveedores, y cada proveedor puede asignar un precio distinto para
+un product.
+ 
+
+ 
+Implementación requerida de la clase Order 
+ 
+La  clase Order toma los siguientes valores durante la
+instanciación:
+c La lista de items deberá estar vacía, pero no
+nula.
+ 
+Se
+deben implementar los siguientes métodos de la clase Order: 
+ 
+·        void addItem(Item
+item)
+Este
+método añade un item
+a la order
+c  Elitem se añade a
+la lista de items.
+c  Elprice del item deberá ser mayor o igual a
+cero. De lo contrario, se lanzará una IncorrectItemException.
+c  Laquantity
+del item será mayor
+que cero. De lo contrario, se lanzará una IncorrectItemException.
+c  Si
+el product ya
+existe en la lista de items,
+el nuevo item no se
+añade, sino que se incrementa la quantity
+del  item existente en la lista de items.
+c  Si
+el product ya
+existe en la lista de items,
+pero el price varía, el
+nuevo item se añade a
+la lista de items
+(imagine, por ejemplo, el product
+vendido por dos proveedores diferentes con precios distintos).
+ 
+
+[1] Ten en cuenta que la relación
+entre Order y Product es n:m, por lo que se requiere
+un objeto intermedio."
+
+y para el contexto del experimento te dara las instrucciones;"Parte D
+Nombre:
+Apellidos: 
+ 
+ 
+1.            Realice un fork del repositorio https://github.com/GRISE-UPM/2026-ESPE-parte-d1 
+2.            Clone el repositorio forkeado localmente.
+3.            Añada un fichero README.md con su nombre y apellidos.
+4.            Realice un commit. El mensaje debe ser significativo.
+5.            Confeccione las pruebas de unidad, para la especificación adjunta,
+usando jUnit. 
+·        Para ello, debe utilizar el LLM indicado por el profesor.
+Utilice el interfaz web, ya que deberá aportar una copia de la conversación que
+ha mantenido con el LLM. 
+·        Si desea hacer algún comentario, realícelo en el espacio siguiente:
+ 
+ 
+ 
+ 
+6.            Añada al directorio del proyecto un fichero denominado conv_prueba.<ext> con la conversación mantenida
+con el LLM. Asegúrese de que pone este fichero bajo el control de git.
+Realice un commit. El mensaje debe ser significativo.
+7.            Realice un push del proyecto al repositorio forkeado.
+8.            Realice un pull request al repositorio original. Incluya su
+nombre y apellidos en el comentario del pull request.""
+
+
+LLM:"Entendido. He analizado detenidamente tanto la **especificación de la clase `Order**` como las **instrucciones del experimento (Parte D)**.
+
+Para proceder con la creación de las pruebas de unidad usando **JUnit**, primero necesito visualizar o que me proporciones el código actual de las clases involucradas (`Order`, `Item`, `Product` y la excepción `IncorrectItemException`), ya que las pruebas deben basarse en la implementación o en la estructura definida.
+
+Sin embargo, basándome en la lógica de negocio que has descrito, aquí tienes un resumen de los **casos de prueba (Test Cases)** que debemos cubrir para el método `addItem()`:
+
+### Casos de Prueba Identificados:
+
+1. **Añadir item válido:** Verificar que un `Item` con precio  y cantidad  se añade correctamente a una lista vacía.
+2. **Precio negativo:** Verificar que si se intenta añadir un `Item` con `price < 0`, se lanza una `IncorrectItemException`.
+3. **Cantidad cero o negativa:** Verificar que si se intenta añadir un `Item` con `quantity <= 0`, se lanza una `IncorrectItemException`.
+4. **Producto duplicado (mismo precio):** Verificar que si se añade un `Product` que ya existe en la `Order` con el **mismo precio**, no se añade un nuevo objeto a la lista, sino que se incrementa la cantidad del existente.
+5. **Producto duplicado (distinto precio):** Verificar que si se añade un `Product` que ya existe pero con un **precio diferente**, se añade como un nuevo `Item` independiente en la lista.
+
+---
+
+### Siguientes Pasos sugeridos:
+
+Para ayudarte a completar el **punto 5** de tus instrucciones ("Confeccione las pruebas de unidad"):
+
+1. **Proporcióname el código Java** de las clases si ya las tienes, o confírmame si quieres que yo genere primero el esqueleto de las clases y luego los tests.
+2. Una vez tenga el código, **generaré el archivo de pruebas JUnit** (por ejemplo, `OrderTest.java`) para que puedas incluirlo en tu repositorio.
+
+¿Deseas que genere el código de las pruebas ahora mismo basándome en la especificación técnica que compartiste?"
+Jordy:"perfecto, pero previo a esto debes comprender como esta desarrollado el sistema. Te proveo los codigos para que lo comprendas y puedas realizar las pruebas sin errores."
+
+LLM:"He analizado el código fuente proporcionado. La estructura es clara y sigue la lógica de negocio descrita en la especificación.
+
+Aquí tienes los puntos clave detectados en la implementación que guiarán nuestras pruebas unitarias:
+
+* **`Order`**: Utiliza un `ArrayList` interno para gestionar los objetos que implementan la interfaz `Item`.
+* **Lógica de duplicados**: Si el producto existe y el precio es idéntico, suma cantidades. Si el precio es distinto, lo añade como una nueva línea.
+* **Validación**: Lanza `IncorrectItemException` si el precio es  o la cantidad es .
+* **`Product`**: La igualdad se basa en la referencia del objeto (o el método `equals` por defecto), ya que no tiene un `equals` sobreescrito basado en el `id` en el código proporcionado.
+* **Dependencia**: Como `Item` es una **interfaz**, para los tests necesitaremos usar un "Mock" (simulacro) o crear una clase de soporte que la implemente.
+
+---
+
+### Propuesta de Pruebas Unitarias (JUnit 5)
+
+Para cumplir con el **paso 5** de tu experimento, he diseñado esta suite de pruebas. He utilizado **Mockito** (muy común en entornos profesionales) para simular la interfaz `Item` y la clase `Product`, permitiendo aislar la lógica de `Order`.
+
+```java
+package es.upm.grise.profundizacion.order;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import es.upm.grise.exceptions.IncorrectItemException;
+
+public class OrderTest {
+
+    private Order order;
+    private Item mockItem;
+    private Product mockProduct;
+
+    @BeforeEach
+    public void setUp() {
+        order = new Order();
+        mockItem = mock(Item.class);
+        mockProduct = mock(Product.class);
+    }
+
+    // 1. Verificar que un item válido se añade correctamente
+    @Test
+    public void testAddItem_Success() throws IncorrectItemException {
+        when(mockItem.getPrice()).thenReturn(10.0);
+        when(mockItem.getQuantity()).thenReturn(2);
+        when(mockItem.getProduct()).thenReturn(mockProduct);
+
+        order.addItem(mockItem);
+
+        assertEquals(1, order.getItems().size(), "La lista debería tener 1 item");
+        assertTrue(order.getItems().contains(mockItem));
+    }
+
+    // 2. Verificar excepción por precio negativo
+    @Test
+    public void testAddItem_NegativePrice_ThrowsException() {
+        when(mockItem.getPrice()).thenReturn(-1.0);
+        
+        assertThrows(IncorrectItemException.class, () -> {
+            order.addItem(mockItem);
+        });
+    }
+
+    // 3. Verificar excepción por cantidad cero
+    @Test
+    public void testAddItem_ZeroQuantity_ThrowsException() {
+        when(mockItem.getPrice()).thenReturn(10.0);
+        when(mockItem.getQuantity()).thenReturn(0);
+        
+        assertThrows(IncorrectItemException.class, () -> {
+            order.addItem(mockItem);
+        });
+    }
+
+    // 4. Verificar que se incrementa la cantidad si el producto y precio son iguales
+    @Test
+    public void testAddItem_DuplicateProductSamePrice_IncrementsQuantity() throws IncorrectItemException {
+        Item existingItem = mock(Item.class);
+        when(existingItem.getProduct()).thenReturn(mockProduct);
+        when(existingItem.getPrice()).thenReturn(10.0);
+        when(existingItem.getQuantity()).thenReturn(1);
+
+        Item newItem = mock(Item.class);
+        when(newItem.getProduct()).thenReturn(mockProduct);
+        when(newItem.getPrice()).thenReturn(10.0);
+        when(newItem.getQuantity()).thenReturn(3);
+
+        order.addItem(existingItem);
+        order.addItem(newItem);
+
+        assertEquals(1, order.getItems().size(), "No debería añadir un nuevo item");
+        verify(existingItem).setQuantity(4); // 1 + 3
+    }
+
+    // 5. Verificar que se añade nuevo item si el precio es distinto aunque sea el mismo producto
+    @Test
+    public void testAddItem_SameProductDifferentPrice_AddsNewItem() throws IncorrectItemException {
+        Item item1 = mock(Item.class);
+        when(item1.getProduct()).thenReturn(mockProduct);
+        when(item1.getPrice()).thenReturn(10.0);
+        when(item1.getQuantity()).thenReturn(1);
+
+        Item item2 = mock(Item.class);
+        when(item2.getProduct()).thenReturn(mockProduct);
+        when(item2.getPrice()).thenReturn(15.0);
+        when(item2.getQuantity()).thenReturn(1);
+
+        order.addItem(item1);
+        order.addItem(item2);
+
+        assertEquals(2, order.getItems().size(), "Debería haber 2 items por tener precios distintos");
+    }
+}
+
+```
+
+---
+
+### ¿Qué debes hacer ahora?
+
+1. **Copia el código anterior** en tu archivo `OrderTest.java`.
+2. Asegúrate de tener la dependencia de **Mockito** en tu `pom.xml` o en el classpath (es el estándar para este tipo de ejercicios). Si no puedes usar Mockito, dímelo y crearé una clase `ItemImpl` manual para los tests.
+3. **Realiza el punto 6** de tus instrucciones: guarda esta conversación en un archivo `conv_prueba.md` (o la extensión que prefieras) y haz el commit correspondiente.
+
+**¿Te gustaría que adapte los tests sin usar Mockito (usando una clase interna simple) o está bien así para tu experimento?**"
+
